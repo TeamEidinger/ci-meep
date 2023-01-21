@@ -68,7 +68,7 @@ jobs:
       run: swift test -v
       
   build-Latest:
-    name: Test Latest (iOS, tvOS, watchOS)
+    name: Latest ${{ matrix.name }}
     runs-on: macOS-12
     env:
       DEVELOPER_DIR: "/Applications/Xcode_14.2.app/Contents/Developer"
