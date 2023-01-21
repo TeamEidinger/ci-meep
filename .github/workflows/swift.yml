@@ -79,7 +79,7 @@ jobs:
           - destination: "OS=16.2,name=iPhone 14 Pro"
             name: "iOS"
             scheme: "ci-meep"
-          - destination: "OS=16.2,name=Apple TV"
+          - destination: "OS=16.1,name=Apple TV"
             name: "tvOS"
             scheme: "ci-meep"
           - destination: "OS=9.1,name=Apple Watch Series 8 (45mm)"
