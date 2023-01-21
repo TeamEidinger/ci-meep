@@ -1,0 +1,72 @@
+# This workflow will build a Swift project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
+
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - ".github/workflows/**"
+      - "Package.swift"
+      - "Source/**"
+      - "Tests/**"    
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - ".github/workflows/**"
+      - "Package.swift"
+      - "Source/**"
+      - "Tests/**"    
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+  
+jobs:
+  build:
+
+    runs-on: ${{ matrix.runner-image }}
+    env:
+      DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}/Contents/Developer"
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - xcode: "Xcode_14.1.app"
+            runner-image: macOS-12
+            name: "macOS 12, Xcode 14.1, Swift 5.7.1"
+            testPlan: "macOS"
+          - xcode: "Xcode_14.0.1.app"
+            runner-image: macOS-12
+            name: "macOS 12, Xcode 14.0.1, Swift 5.7.0"
+            testPlan: "macOS"
+          - xcode: "Xcode_13.4.1.app"
+            runner-image: macOS-12
+            name: "macOS 12, Xcode 13.4.1, Swift 5.6.1"
+            testPlan: "macOS-NoTS"
+          - xcode: "Xcode_13.3.1.app"
+            runner-image: macOS-12
+            name: "macOS 12, Xcode 13.3.1, Swift 5.6.0"
+            testPlan: "macOS-NoTS"
+          - xcode: "Xcode_13.2.1.app"
+            runner-image: macOS-11
+            name: "macOS 11, Xcode 13.2.1, Swift 5.5.2"
+          - xcode: "Xcode_13.1.app"
+            runner-image: macOS-11
+            name: "macOS 11, Xcode 13.1, Swift 5.5.1"
+            testPlan: "macOS-NoTS"
+          - xcode: "Xcode_13.0.app"
+            runner-image: macOS-11
+            name: "macOS 11, Xcode 13.0, Swift 5.5.0"
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Xcode version
+      run: xcodebuild -version
+    - name: Swift version
+      run: swift --version
+    - name: Build (${{ matrix.name }})
+      run: swift build -v
+    - name: Run tests
+      run: swift test -v
