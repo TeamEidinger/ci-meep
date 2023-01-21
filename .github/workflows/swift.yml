@@ -21,7 +21,7 @@ concurrency:
   cancel-in-progress: true
   
 jobs:
-  build:
+  build-macOS:
     name: Xcode ${{ matrix.xcode }}
     runs-on: ${{ matrix.runner-image }}
     env:
@@ -66,3 +66,28 @@ jobs:
       run: swift build -v
     - name: Run tests
       run: swift test -v
+      
+  build-Latest:
+    name: Test Latest (iOS, tvOS, watchOS)
+    runs-on: macOS-12
+    env:
+      DEVELOPER_DIR: "/Applications/Xcode_14.2.app/Contents/Developer"
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - destination: "OS=16.2,name=iPhone 14 Pro"
+            name: "iOS"
+            scheme: "ci-meep"
+          - destination: "OS=16.2,name=Apple TV"
+            name: "tvOS"
+            scheme: "ci-meep"
+          - destination: "OS=9.1,name=Apple Watch Series 8 (45mm)"
+            name: "watchOS"
+            scheme: "ci-meep"     
+    steps:
+      - uses: actions/checkout@v3
+      - name: ${{ matrix.name }}
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -scheme "${{ matrix.scheme }}" -destination "${{ matrix.destination }}" clean test | xcpretty
+        
+  
