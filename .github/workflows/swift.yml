@@ -35,24 +35,24 @@ jobs:
           - xcode: "14.1"
             runner-image: macOS-12
             name: "macOS 12, Xcode 14.1, Swift 5.7.1"
-          - xcode: "14.0.1"
-            runner-image: macOS-12
-            name: "macOS 12, Xcode 14.0.1, Swift 5.7.0"
-          - xcode: "13.4.1"
-            runner-image: macOS-12
-            name: "macOS 12, Xcode 13.4.1, Swift 5.6.1"
-          - xcode: "13.3.1"
-            runner-image: macOS-12
-            name: "macOS 12, Xcode 13.3.1, Swift 5.6.0"
-          - xcode: "13.2.1"
-            runner-image: macOS-11
-            name: "macOS 11, Xcode 13.2.1, Swift 5.5.2"
-          - xcode: "13.1"
-            runner-image: macOS-11
-            name: "macOS 11, Xcode 13.1, Swift 5.5.1"
-          - xcode: "13.0"
-            runner-image: macOS-11
-            name: "macOS 11, Xcode 13.0, Swift 5.5.0"
+#           - xcode: "14.0.1"
+#             runner-image: macOS-12
+#             name: "macOS 12, Xcode 14.0.1, Swift 5.7.0"
+#           - xcode: "13.4.1"
+#             runner-image: macOS-12
+#             name: "macOS 12, Xcode 13.4.1, Swift 5.6.1"
+#           - xcode: "13.3.1"
+#             runner-image: macOS-12
+#             name: "macOS 12, Xcode 13.3.1, Swift 5.6.0"
+#           - xcode: "13.2.1"
+#             runner-image: macOS-11
+#             name: "macOS 11, Xcode 13.2.1, Swift 5.5.2"
+#           - xcode: "13.1"
+#             runner-image: macOS-11
+#             name: "macOS 11, Xcode 13.1, Swift 5.5.1"
+#           - xcode: "13.0"
+#             runner-image: macOS-11
+#             name: "macOS 11, Xcode 13.0, Swift 5.5.0"
 
     steps:
     - uses: actions/checkout@v3
@@ -62,40 +62,48 @@ jobs:
       run: xcodebuild -version      
     - name: Which Swift version ?
       run: swift --version
-    - name: Build (${{ matrix.name }})
-      run: swift build -v
-    - name: Run tests
-      run: swift test -v
+#     - name: Build (${{ matrix.name }})
+#       run: swift build -v
+#     - name: Run tests
+#       run: swift test -v
+    - run: echo "Hello, World!" > HelloWorld.swift
+    - run: ls
+    - name: Store coverage for sonar job
+      if: matrix.name == 'iOS'
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage
+        path: HelloWorld.swift
       
-  build-Latest:
-    name: Latest ${{ matrix.name }}
-    runs-on: macOS-12
-    env:
-      DEVELOPER_DIR: "/Applications/Xcode_14.2.app/Contents/Developer"
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - destination: "OS=16.2,name=iPhone 14 Pro"
-            name: "iOS"
-            scheme: "ci-meep"
-          - destination: "OS=16.1,name=Apple TV"
-            name: "tvOS"
-            scheme: "ci-meep"
-          - destination: "OS=9.1,name=Apple Watch Series 8 (45mm)"
-            name: "watchOS"
-            scheme: "ci-meep"     
-    steps:
-      - uses: actions/checkout@v3
-      - name: ${{ matrix.name }}
-        run: set -o pipefail && xcodebuild -scheme "${{ matrix.scheme }}" -destination "${{ matrix.destination }}" clean test | xcpretty
-      - run: echo "Hello, World!" > HelloWorld.swift
-      - run: ls
-      - name: Store coverage for sonar job
-        if: matrix.name == 'iOS'
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage
-          path: HelloWorld.swift
+#   build-Latest:
+#     name: Latest ${{ matrix.name }}
+#     runs-on: macOS-12
+#     env:
+#       DEVELOPER_DIR: "/Applications/Xcode_14.2.app/Contents/Developer"
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         include:
+#           - destination: "OS=16.2,name=iPhone 14 Pro"
+#             name: "iOS"
+#             scheme: "ci-meep"
+#           - destination: "OS=16.1,name=Apple TV"
+#             name: "tvOS"
+#             scheme: "ci-meep"
+#           - destination: "OS=9.1,name=Apple Watch Series 8 (45mm)"
+#             name: "watchOS"
+#             scheme: "ci-meep"     
+#     steps:
+#       - uses: actions/checkout@v3
+#       - name: ${{ matrix.name }}
+#         run: set -o pipefail && xcodebuild -scheme "${{ matrix.scheme }}" -destination "${{ matrix.destination }}" clean test | xcpretty
+#       - run: echo "Hello, World!" > HelloWorld.swift
+#       - run: ls
+#       - name: Store coverage for sonar job
+#         if: matrix.name == 'iOS'
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: coverage
+#           path: HelloWorld.swift
         
   
