@@ -24,9 +24,20 @@ jobs:
           workflow: ${{ github.event.workflow_run.workflow_id }}
           workflow_conclusion: success
           path: .
+          if_no_artifact_found: 'ignore'
+      - name: Set found_files
+        id: set_found_files
+        run: |
+          if [ -f coverage/HelloWorld.swift ]; then
+            echo "found_files=true" >> $GITHUB_OUTPUT
+          else
+            echo "found_files=false" >> $GITHUB_OUTPUT
+          fi  
       - run: ls
       - run: |
           mv coverage/HelloWorld.swift .
           rm -rf coverage
           ls
+        if: steps.set_found_files.outputs.found_files == 'true'   
       - run: cat HelloWorld.swift
+        if: steps.set_found_files.outputs.found_files == 'true'   
