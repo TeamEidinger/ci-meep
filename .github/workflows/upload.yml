@@ -24,6 +24,5 @@ jobs:
           workflow: ${{ github.event.workflow_run.workflow_id }}
           workflow_conclusion: success
           path: .
-      - run: unzip coverage.zip
       - run: ls
       - run: cat HelloWorld.swift
