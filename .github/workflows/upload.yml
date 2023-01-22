@@ -27,6 +27,6 @@ jobs:
       - run: ls
       - run: |
           mv coverage/HelloWorld.swift .
-          rm -f coverage
+          rm -rf coverage
           ls
       - run: cat HelloWorld.swift
