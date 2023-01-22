@@ -25,4 +25,7 @@ jobs:
           workflow_conclusion: success
           path: .
       - run: ls
+      - run: |
+          mv coverage/HelloWorld.swift .
+          rm coverage
       - run: cat HelloWorld.swift
