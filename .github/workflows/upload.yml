@@ -17,26 +17,12 @@ jobs:
       - run: ls
       - name: Dump context
         run: echo '${{ toJSON(github) }}'
-      - name: 'Download artifact'
-        uses: actions/github-script@v6.3.3
+      - name: Download artifact
+        id: download-artifact
+        uses: dawidd6/action-download-artifact@v2
         with:
-          script: |
-            const fs = require('fs');
-            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               run_id: ${{ github.event.workflow_run.id }},
-            });
-            const artifact = artifacts.data.artifacts.find((artifact) => {
-              return artifact.name == 'coverage'
-            });
-            const download = await github.rest.actions.downloadArtifact({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              artifact_id: artifact.id,
-              archive_format: 'zip',
-            });
-            fs.writeFileSync('${{github.workspace}}/coverage.zip', Buffer.from(download.data));
+          workflow: ${{ github.event.workflow_run.workflow_id }}
+          workflow_conclusion: success
       - run: unzip coverage.zip
       - run: ls
       - run: cat HelloWorld.swift
