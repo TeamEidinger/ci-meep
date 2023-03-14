@@ -3,4 +3,7 @@ public struct ci_meep {
 
     public init() {
     }
+    
+    public log(_ message: String) {
+    }
 }
